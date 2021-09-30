@@ -36,26 +36,35 @@ class LED:
         GPIO.output(23,GPIO.LOW) 
 
     def swichOnTempRed(self):
-        
+        GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
      
-        GPIO.setup(11,GPIO.OUT)
-        
-        GPIO.output(11,GPIO.HIGH)
+        # GPIO.setup(11,GPIO.OUT)
+        # GPIO.output(11,GPIO.HIGH)
+        # time.sleep(1)
+
+        # GPIO.output(11,GPIO.LOW)
+
+        GPIO.setup(17,GPIO.OUT)
+        GPIO.output(17,GPIO.HIGH)
         time.sleep(1)
 
-        GPIO.output(11,GPIO.LOW)
+        GPIO.output(17,GPIO.LOW)
 
     def swichOnTempGreen(self):
-        
+        GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
      
-        GPIO.setup(13,GPIO.OUT)
-        
-        GPIO.output(13,GPIO.HIGH)
+        # GPIO.setup(13,GPIO.OUT)
+        # GPIO.output(13,GPIO.HIGH)
+        # time.sleep(1)
+
+        # GPIO.output(13,GPIO.LOW)
+        GPIO.setup(27,GPIO.OUT)
+        GPIO.output(27,GPIO.HIGH)
         time.sleep(1)
 
-        GPIO.output(13,GPIO.LOW)
+        GPIO.output(27,GPIO.LOW)
     
 # LEDObj = LED()
 # LEDObj.swichOnTempRed()
