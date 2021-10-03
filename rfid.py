@@ -25,30 +25,24 @@ class rfid:
                 finally:
                         GPIO.cleanup()
         
-        def readData(self,check):
+        def readData(self):
                 """Reads Data from the rfid card
                 Turns on green LED if access granted
                 Turns on RED LED if access denied"""
                 try:
-                        print("running")
+                        # print("running")
                         id, text = reader.read()
-                        # print(id)
-                        print(text)
-
-                        text = text.strip()
-                        if text == check:
-                                print("true")
-                                self.LEDObj.swichOnGreen()
-                        else:
-                                print("false")
-                                self.LEDObj.swichOnRed()
+                        # print(text)
                         
+                        text = text.strip()
+                        return text
                 finally:
                         GPIO.cleanup()
+                        return text
 
-rfid_obj = rfid()
-# rfid_obj.readData("MKWZWA003")
-rfid_obj.writeData()
+# rfid_obj = rfid()
+# # # rfid_obj.readData("MKWZWA003")
+# rfid_obj.writeData()
 
-print("hello world")
-GPIO.cleanup()
+# print("hello world")
+# GPIO.cleanup()
