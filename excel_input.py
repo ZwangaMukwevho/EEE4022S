@@ -81,46 +81,78 @@ class excel_input():
         sheet = self.getSheet(name)
         max_rows = sheet.max_row
         max_columns = sheet.max_column
-        # print(max_rows)
-        # print(max_columns)
-        moreValues = None
+
+        # Initialise values to be used in loop
+        moreValues = None # Stores value for insert statement with multiple row entries
         schedule_list = [] # List to be used to create register ID
+        invalid_data = False
+        query = ""
+        first_entry = True
+
         for i in range(3,max_rows+1):
             for j in range(2,max_columns+1):
-                
+                invalid_data = False
                 if j == 2:
                     date = sheet.cell(row=i, column=j).value
+                    if date is None:
+                        invalid_data = True
+                        continue
+                    # print("date")
                     # print(date)
                 
                 elif j == 3:
                     start_time = sheet.cell(row=i, column=j).value
+                    if start_time is None:
+                        invalid_data = True
+                        continue
+                    # print("start time")
                     # print(start_time)
                 
                 elif j == 4:
                     end_time = sheet.cell(row=i, column=j).value
+                    if end_time is None:
+                        invalid_data = True
+                        continue
+                    # print("end time")
+                    # print(end_time)
                     # print(end_time)
                 
                 elif j == 5:
                     course_code = sheet.cell(row=i,column=j).value
+                    if course_code is None:
+                        invalid_data = True
+                        continue
+                    # print("course code")
+                    # print(course_code)
                     # print(course_code)
 
                 elif j == 6:
                     activity = sheet.cell(row=i, column=j).value
+                    if activity is None:
+                        invalid_data = True
+                        continue
+                    # print("activity")
                     # print(activity) 
             
-            start = self.createDateTimeObj(date,start_time)
-            end = self.createDateTimeObj(date,end_time)
-            schedule_id = self.createScheduleID(course_code,date,start_time)
-            if i == 3:
-                query = "INSERT INTO lab_schedule(schedule_id,start,end,code,activity) VALUES('{}','{}','{}','{}','{}');".format(schedule_id,start,end,course_code,activity)
-            else:
-                moreValues = "('{}','{}','{}','{}','{}');".format(schedule_id,start,end,course_code,activity)
-        
-            query = self.gatherInsertQueries(query,moreValues)
-            schedule_list.append((schedule_id,course_code))
-            # print(query)
-            # print("")
-        
+            if( not invalid_data):
+                start = self.createDateTimeObj(date,start_time)
+                end = self.createDateTimeObj(date,end_time)
+                schedule_id = self.createScheduleID(course_code,date,start_time)
+                
+               
+                if( not self.checkLabScheduleExistance(schedule_id,dbObj)):
+                    
+                    if(first_entry):
+                        query = "INSERT INTO lab_schedule(schedule_id,start,end,code,activity) VALUES('{}','{}','{}','{}','{}');".format(schedule_id,start,end,course_code,activity)
+                        first_entry = False
+                    else:
+                        moreValues = "('{}','{}','{}','{}','{}');".format(schedule_id,start,end,course_code,activity)
+
+    
+                    query = self.gatherInsertQueries(query,moreValues)
+                    schedule_list.append((schedule_id,course_code))
+                
+        print(query)
         # Add all the schedules to the database
         await dbObj.insertData(query)
         # cursor.execute(query)
@@ -146,6 +178,26 @@ class excel_input():
         
     def generateRegisterId(self,student_no,schedule_id):
         return student_no+"_"+schedule_id
+
+    def checkLabScheduleExistance(self,schedule_id,dbObj):
+        query = "SELECT * FROM lab_schedule WHERE schedule_id = '{}'".format(schedule_id)
+        cursor = dbObj.getDB()
+        cursor.execute(query)
+
+        check = False
+        for item in cursor:
+            # print(item)
+            check = True
+            break
+
+        # If item already exists
+        if(check):
+            return True
+        
+        # If titem does not exist
+        else:
+            return False
+            
 
     async def generateRegister(self,schedule_list,dbObj):
         
@@ -176,11 +228,6 @@ class excel_input():
                 query = self.gatherInsertQueries(query,moreValues)
            
             await dbObj.insertData(query)
-
-
-
-
-
 
 
 # Initialisations
