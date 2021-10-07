@@ -1,5 +1,6 @@
 # import MySQLdb
 import mysql.connector
+import asyncio
 
 class database:
     db = None
@@ -27,19 +28,41 @@ class database:
         query = "SELECT * FROM student WHERE student_no = '{}';".format(studentNumber)
         self.cursor.execute(query)
         results = self.cursor.fetchall()
-        return results        
+        return results
+
+    def markRegister(self,studentNumber,activity): 
+        """[summary]
+
+        :param studentNumber: [description]
+        :type studentNumber: [type]
+        :param activity: [description]
+        :type activity: [type]
+        """
+        return ""
+    
+    def getDB(self):
+        return self.cursor
+    
+    async def insertData(self,query):
+        """Inserts data to the enrolls the database using the given qeury
+
+        :param query: [query to be executed on the database]
+        :type query: [String]
+        """
+        self.cursor.execute(query)
+        self.db.commit()
 
 
-dbObj = database("eee4022sdatabase-do-user-9871310-0.b.db.ondigitalocean.com",
-    "admin",
-    "aGAPX1Hn5TdTE-4I",
-    "lab_system",
-    "25060",
-    "mysql_native_password"
-    )
+# dbObj = database("eee4022sdatabase-do-user-9871310-0.b.db.ondigitalocean.com",
+#     "admin",
+#     "aGAPX1Hn5TdTE-4I",
+#     "lab_system",
+#     "25060",
+#     "mysql_native_password"
+#     )
 
-results = dbObj.findStudentNumber("MKWZA004")
-print(results)
+# results = dbObj.findStudentNumber("MKWZA004")
+# print(results)
 
 # Creating curser
 # cursor = db.cursor()
