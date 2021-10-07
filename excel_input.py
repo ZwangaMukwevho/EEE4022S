@@ -77,53 +77,110 @@ class excel_input():
         sheet = workBook.active
         return sheet
     
-    def readLabSchedule(self,name):
+    async def readLabSchedule(self,name,dbObj):
         sheet = self.getSheet(name)
         max_rows = sheet.max_row
         max_columns = sheet.max_column
-        print(max_rows)
-        print(max_columns)
+        # print(max_rows)
+        # print(max_columns)
+        moreValues = None
+        schedule_list = [] # List to be used to create register ID
         for i in range(3,max_rows+1):
             for j in range(2,max_columns+1):
                 
                 if j == 2:
                     date = sheet.cell(row=i, column=j).value
-                    print(date)
+                    # print(date)
                 
                 elif j == 3:
                     start_time = sheet.cell(row=i, column=j).value
-                    print(start_time)
+                    # print(start_time)
                 
                 elif j == 4:
                     end_time = sheet.cell(row=i, column=j).value
-                    print(end_time)
+                    # print(end_time)
                 
                 elif j == 5:
                     course_code = sheet.cell(row=i,column=j).value
-                    print(course_code)
+                    # print(course_code)
 
                 elif j == 6:
                     activity = sheet.cell(row=i, column=j).value
-                    print(activity) 
+                    # print(activity) 
             
             start = self.createDateTimeObj(date,start_time)
             end = self.createDateTimeObj(date,end_time)
-            print(self.createScheduleID(course_code,date,start_time))
-            print("")
+            schedule_id = self.createScheduleID(course_code,date,start_time)
+            if i == 3:
+                query = "INSERT INTO lab_schedule(schedule_id,start,end,code,activity) VALUES('{}','{}','{}','{}','{}');".format(schedule_id,start,end,course_code,activity)
+            else:
+                moreValues = "('{}','{}','{}','{}','{}');".format(schedule_id,start,end,course_code,activity)
+        
+            query = self.gatherInsertQueries(query,moreValues)
+            schedule_list.append((schedule_id,course_code))
+            # print(query)
+            # print("")
+        
+        # Add all the schedules to the database
+        await dbObj.insertData(query)
+        # cursor.execute(query)
+        await self.generateRegister(schedule_list,dbObj)
+
+    def gatherInsertQueries(self,query,newValues=None):
+        """Combine multiple insert queries into one query,
+        In order to allow one call to the db instead of multiple calls
+
+        :param query: The first values to be inserted in the table, (Leading statements of the insert statements)
+        :type query: [String]
+        :param newValues: [The additional values that have to the leading statement of the query], defaults to None
+        :type newValues: [String], optional
+        :return: [The new query that has old values and the new values]
+        :rtype: [String]
+        """
+        if(newValues is not None):
+            query = query[:-1] + ", "+ newValues
+        else:
+            query = query
+        return query
 
         
-            # cell_obj = sheet.cell(row=i,column=2)
-            # student_no = cell_obj.value
+    def generateRegisterId(self,student_no,schedule_id):
+        return student_no+"_"+schedule_id
 
-            # if (check):
-            #     courseCode = sheet.cell(row=i,column=1).value
-            #     check = False
+    async def generateRegister(self,schedule_list,dbObj):
+        
+        for schedule in schedule_list:
+            course_code = schedule[1]
+            schedule_id = schedule[0] 
 
-            # if student_no != None:
-            #     await self.postToEnrolls(student_no,courseCode,self.dbObj)
-            #     counter += 1
-            # elif student_no == None:
-            #     check = True
+            # Get all students
+            cursor = dbObj.getDB()
+            query = "SELECT * FROM enrolls WHERE code = '{}';".format(course_code)
+            cursor.execute(query)
+
+            # Initialise values to be used in loop
+            first = True
+            moreValues = None
+
+            for entry in cursor:
+                student_no = entry[1]
+                status = 0
+                registerId = self.generateRegisterId(student_no,schedule_id)
+
+                if (first):
+                    query = "INSERT INTO register(register_id,status,student_no,schedule_id) VALUES('{}','{}','{}','{}');".format(registerId,status,student_no,schedule_id)
+                    first = False
+                else:
+                    moreValues = "('{}','{}','{}','{}');".format(registerId,status,student_no,schedule_id)
+
+                query = self.gatherInsertQueries(query,moreValues)
+           
+            await dbObj.insertData(query)
+
+
+
+
+
 
 
 # Initialisations
@@ -139,10 +196,9 @@ wb_obj = load_workbook('course_students.xlsx')
 sheet = wb_obj.active
 exObj = excel_input(dbObj)
 
-exObj.readLabSchedule('lab_schedule.xlsx')
-# loop = asyncio.get_event_loop()
+loop = asyncio.get_event_loop()
 # loop.run_until_complete(exObj.getStudents(sheet))
+loop.run_until_complete(exObj.readLabSchedule('lab_schedule.xlsx',dbObj))
 
-
-
+# loop.run_until_complete(exObj.generateRegister('EEE3089F','2045-2020-01-02',dbObj))
 # getCourse(sheet)
