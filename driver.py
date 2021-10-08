@@ -8,21 +8,23 @@ from db import database
 def checkTemp(tempObj,LEDObj):
     if(tempObj.readTemp()) > 25.00:
         LEDObj.swichOnTempRed()
-        print("too much")
+        return False
+        # print("too much")
     else:
         LEDObj.swichOnTempGreen()
-        print("perfect")
+        # print("perfect")
+        return True
 
-def checkRficCard(rfidObj,LEDObj,dbObj):
-    text = rfidObj.readData()
+def checkRficCard(text,LEDObj,dbObj):
+    # text = rfidObj.readData()
     results = dbObj.findStudentNumber(text)
     if len(results) != 0:
         LEDObj.swichRfidOnGreen()
-        print("green")
+        # print("green")
         return True
     else: 
         LEDObj.swichRfidOnRed()
-        print("false")
+        # print("false")
         return False
 
     pass
@@ -37,14 +39,21 @@ if __name__ == "__main__":
     "lab_system",
     "25060",
     "mysql_native_password") # database class object
+    # rfidObj.readData()
 
 
     # print(GPIO.getmode())
     # mfrc22 module uses BCM mode, if you set-up GPIO using board mode, the data won't be read
-    rfidCheck = checkRficCard(rfidObj,LEDObj,dbObj)
+    print("provide card")
+    student_no = rfidObj.readData()
+    rfidCheck = checkRficCard(student_no,LEDObj,dbObj)
     
-    # if(rfidCheck):
-    #     print("succesful RFID check")
-    #     checkTemp(tempObj,LEDObj)
+    if(rfidCheck):
+        print("succesful RFID check")
+        tempCheck = checkTemp(tempObj,LEDObj)
+
+        if(tempCheck):
+            print("successful temp check")
+            dbObj.markAttendance(student_no)
     
     

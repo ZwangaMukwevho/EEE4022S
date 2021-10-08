@@ -1,6 +1,7 @@
 # import MySQLdb
 import mysql.connector
 import asyncio
+from datetime import datetime
 
 class database:
     db = None
@@ -51,7 +52,27 @@ class database:
         """
         self.cursor.execute(query)
         self.db.commit()
+    
+    def getCurrentActivity(self):
 
+        now = datetime.now() # The current time
+        print(now)
+        query = "SELECT * FROM lab_schedule WHERE start <= '{}' and end >= '{}'".format(now,now)
+        
+        self.cursor.execute(query)
+
+        results = self.cursor.fetchall()
+        return results
+    
+    def markAttendance(self,student_no):
+        results = self.getCurrentActivity()
+        for activity in results:
+            schedule_id = activity[0]
+            query = "UPDATE register SET status = '1' WHERE student_no = '{}' AND schedule_id = '{}';".format(student_no,schedule_id)
+            print(query)
+            self.cursor.execute(query) 
+            self.db.commit()
+    
 
 # dbObj = database("eee4022sdatabase-do-user-9871310-0.b.db.ondigitalocean.com",
 #     "admin",
