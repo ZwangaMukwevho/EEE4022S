@@ -30,6 +30,7 @@ class admin:
             print("press '2' to update lab schedule:")
             print("Press '3' to view courses in databases:")
             print("Press '4' to view register for a specific course:")
+            print("Press '5' to lab_schedule for a specific course:")
             print("Press 'q' to quit: ")
             inValue = input("")
 
@@ -38,10 +39,29 @@ class admin:
                 self.loop.run_until_complete(self.sheetsObj.AddCourse(self.dbObj))
                 print("done updating courses")
             
+            if inValue == '2':
+                print("updating lab_schedule")
+                self.loop.run_until_complete(self.sheetsObj.updateLabSchedule(self.dbObj))
+                print("done updating lab_schedule")
+                print("Corresponding registers for the lab schedule have been created")
+            
             if inValue == '3':
                 print("")
                 print("The following courses are on the database")
                 self.loop.run_until_complete(self.sheetsObj.showCourses(self.dbObj))
+            
+            if inValue == '4':
+                inValue = input("Enter the schedule_id: ")
+                print(f"The register for {inValue} is: ")
+                self.loop.run_until_complete(self.sheetsObj.showRegister(inValue,self.dbObj))
+                print("")
+
+            if inValue == '5':
+                inValue = input("Enter the course code: ")
+                print(f"The current available schedule activities  for {inValue} are: ")
+                self.loop.run_until_complete(self.sheetsObj.showLabSchedule(inValue,self.dbObj))
+                print("")
+               
             
             if inValue == 'q':
                 print("quitting")
@@ -60,12 +80,12 @@ if __name__ == "__main__":
     "25060",
     "mysql_native_password"
     )
-    datetime_obj = datetime.strptime("10/15/2021", "%m/%d/%Y")
-    print(datetime_obj)
-    # sheetObj = sheets()
-    # adObj = admin(dbObj,sheetObj)
-    # adObj.welcomeDisplay()
-    # adObj.dispayMenue()
+    # datetime_obj = datetime.strptime("10/15/2021", "%m/%d/%Y")
+    # print(datetime_obj)
+    sheetObj = sheets()
+    adObj = admin(dbObj,sheetObj)
+    adObj.welcomeDisplay()
+    adObj.dispayMenue()
 
 
 
