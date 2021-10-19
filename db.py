@@ -73,6 +73,15 @@ class database:
             self.cursor.execute(query) 
             self.db.commit()
     
+    async def updateStudentRegister(self,student_no,schedule_id,status):
+            query = "UPDATE register SET status = '{}' WHERE student_no = '{}' AND schedule_id = '{}';".format(status,student_no,schedule_id)
+            print(query)
+            try:
+                self.cursor.execute(query)
+                self.db.commit()
+            except:
+                print("Error occured, ensure that student_no, status or schedule_id are valid")
+    
 
 # dbObj = database("eee4022sdatabase-do-user-9871310-0.b.db.ondigitalocean.com",
 #     "admin",
