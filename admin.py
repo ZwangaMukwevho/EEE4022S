@@ -25,13 +25,14 @@ class admin:
         keepRunning = True
         while(keepRunning):
 
-            print("")
+            # print("")
             print("Press '1' to update courses in database:")
             print("press '2' to update lab schedule:")
             print("Press '3' to view courses in databases:")
             print("Press '4' to view register for a specific course:")
-            print("Press '5' to lab_schedule for a specific course:")
-            print("Press 'q' to quit: ")
+            print("Press '5' to view lab_schedules for a specific course:")
+            print("Press '6' to change a students attendance status on register: ")
+            print("print 'q' to quit: ")
             inValue = input("")
 
             if inValue == '1':
@@ -61,7 +62,18 @@ class admin:
                 print(f"The current available schedule activities  for {inValue} are: ")
                 self.loop.run_until_complete(self.sheetsObj.showLabSchedule(inValue,self.dbObj))
                 print("")
-               
+
+            if inValue == '6':
+                inValue = input("Enter the schedule ID of activity: ")
+                print(f"The current register for schedule ID {inValue} is:")
+                print("")
+                self.loop.run_until_complete(self.sheetsObj.showRegister(inValue,self.dbObj))
+                print("")
+                student_no = input("Enter the student number of student number of student: ")
+                print("")
+                status = eval(input("Enter '1' to mark student as present and '2' to mark student as absent for activity: "))                
+                print("")
+                self.loop.run_until_complete(self.dbObj.updateStudentRegister(student_no,inValue,status))
             
             if inValue == 'q':
                 print("quitting")
