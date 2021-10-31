@@ -25,7 +25,7 @@ class rfid:
                 finally:
                         GPIO.cleanup()
         
-        def readData(self):
+        async def readData(self):
                 """Reads Data from the rfid card
                 Turns on green LED if access granted
                 Turns on RED LED if access denied"""
@@ -39,10 +39,3 @@ class rfid:
                 finally:
                         GPIO.cleanup()
                         return text
-
-# rfid_obj = rfid()
-# # # rfid_obj.readData("MKWZWA003")
-# rfid_obj.writeData()
-
-# print("hello world")
-# GPIO.cleanup()

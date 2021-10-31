@@ -18,7 +18,7 @@ class database:
 
         self.cursor = self.db.cursor()
     
-    def findStudentNumber(self,studentNumber):
+    async def findStudentNumber(self,studentNumber):
         """Returns results Select statement that looks for a student number in the student table
 
         :param studentNumber: [MKWZWA0003]
@@ -56,7 +56,6 @@ class database:
     def getCurrentActivity(self):
 
         now = datetime.now() # The current time
-        print(now)
         query = "SELECT * FROM lab_schedule WHERE start <= '{}' and end >= '{}'".format(now,now)
         
         self.cursor.execute(query)
@@ -64,39 +63,31 @@ class database:
         results = self.cursor.fetchall()
         return results
     
-    def markAttendance(self,student_no):
+    async def markAttendance(self,student_no):
+        """Changes status bit from 0 to 1 in the register schema for student with student number student_no
+
+        :param student_no: [Student number of student]
+        :type student_no: [String]
+        """
         results = self.getCurrentActivity()
         for activity in results:
             schedule_id = activity[0]
             query = "UPDATE register SET status = '1' WHERE student_no = '{}' AND schedule_id = '{}';".format(student_no,schedule_id)
-            print(query)
             self.cursor.execute(query) 
             self.db.commit()
     
-    async def updateStudentRegister(self,student_no,schedule_id,status):
-            query = "UPDATE register SET status = '{}' WHERE student_no = '{}' AND schedule_id = '{}';".format(status,student_no,schedule_id)
-            print(query)
-            try:
-                self.cursor.execute(query)
-                self.db.commit()
-            except:
-                print("Error occured, ensure that student_no, status or schedule_id are valid")
+    async def postTempReading(self,student_no,tempValaue):
+        """Records the temperature reading from the student in the database
+
+        :param student_no: [Student number of student]
+        :type student_no: [String]
+        :param tempValaue: [The temperature reading from student]
+        :type tempValaue: [String]
+        """
+        now = datetime.now()
+        now = str(now)[:19]
+        temp_id = student_no+"_"+now
+        query = "INSERT INTO temperature_log(temp_id,date,temp,student_no) VALUES('{}','{}','{}','{}');".format(temp_id,now,tempValaue,student_no)
+        self.cursor.execute(query) 
+        self.db.commit()
     
-
-# dbObj = database("eee4022sdatabase-do-user-9871310-0.b.db.ondigitalocean.com",
-#     "admin",
-#     "aGAPX1Hn5TdTE-4I",
-#     "lab_system",
-#     "25060",
-#     "mysql_native_password"
-#     )
-
-# results = dbObj.findStudentNumber("MKWZA004")
-# print(results)
-
-# Creating curser
-# cursor = db.cursor()
-# cursor.execute("SHOW TABLES")
-
-# for table_name in cursor:
-#    print(table_name)

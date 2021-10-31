@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time
+import asyncio
 
 class LED:
     
@@ -8,7 +9,7 @@ class LED:
             # GPIO.setmode(GPIO.BOARD)
             pass
     
-    def swichRfidOnGreen(self):
+    async def swichRfidOnGreen(self):
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
      
@@ -17,12 +18,14 @@ class LED:
 
         # GPIO.setup(18,GPIO.OUT)
         # GPIO.output(18,GPIO.HIGH)
-        time.sleep(1)
+        # time.sleep(1)
+        time.sleep(0.7)
+        # await asyncio.sleep(0.7)
 
         # GPIO.output(18,GPIO.LOW)
         GPIO.output(24,GPIO.LOW)
     
-    def swichRfidOnRed(self):
+    async def swichRfidOnRed(self):
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
      
@@ -31,11 +34,13 @@ class LED:
         GPIO.setup(23,GPIO.OUT)
         GPIO.output(23,GPIO.HIGH)
 
-        time.sleep(1)
+        # time.sleep(1)
+        time.sleep(0.7)
+        # await asyncio.sleep(0.7)
         # GPIO.output(16,GPIO.LOW)  
         GPIO.output(23,GPIO.LOW) 
 
-    def swichOnTempRed(self):
+    async def swichOnTempRed(self):
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
      
@@ -47,11 +52,13 @@ class LED:
 
         GPIO.setup(17,GPIO.OUT)
         GPIO.output(17,GPIO.HIGH)
-        time.sleep(1)
+        # time.sleep(1)
+        time.sleep(0.7)
+        # await asyncio.sleep(0.7)
 
         GPIO.output(17,GPIO.LOW)
 
-    def swichOnTempGreen(self):
+    async def swichOnTempGreen(self):
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
      
@@ -62,21 +69,8 @@ class LED:
         # GPIO.output(13,GPIO.LOW)
         GPIO.setup(27,GPIO.OUT)
         GPIO.output(27,GPIO.HIGH)
-        time.sleep(1)
+        # time.sleep(1)
+        time.sleep(0.7)
+        # await asyncio.sleep(0.7)
 
         GPIO.output(27,GPIO.LOW)
-    
-# LEDObj = LED()
-# LEDObj.swichOnTempRed()
-# GPIO.cleanup()      
-# GPIO.setmode(GPIO.BOARD)
-# GPIO.setwarnings(False)
-# GPIO.setup(23,GPIO.OUT)
-# GPIO.setup(24,GPIO.OUT)
-# print("LED on")
-# GPIO.output(23,GPIO.HIGH)
-# GPIO.output(24,GPIO.HIGH)
-# time.sleep(1)
-# print("LED off")
-# GPIO.output(23,GPIO.LOW)
-# GPIO.output(24,GPIO.LOW)
