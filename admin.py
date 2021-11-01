@@ -6,6 +6,13 @@ from datetime import datetime
 
 class admin:
     def __init__(self,dbObj,sheetsObj):
+        """Constructor that initilizes the objects (db, sheets) to be used within the class
+
+        :param dbObj: [Database object from db class with funtions for accessing remote database]
+        :type dbObj: [db]
+        :param sheetsObj: [sheets object that access the google sheets that is used for scheduling lab activities]
+        :type sheetsObj: [sheets]
+        """
         self.sheetsObj = sheetsObj
         self.dbObj = dbObj
         self.loop = asyncio.get_event_loop()
@@ -22,6 +29,8 @@ class admin:
         print('|         |  |__________   |__________ |__________    \_________ /')
     
     def dispayMenue(self):
+        """Main loop that prompts user for input and prints result on screen
+        """
         keepRunning = True
         while(keepRunning):
 
