@@ -8,6 +8,21 @@ class database:
     cursor = None
 
     def __init__(self,hostVar,userVar,passwdVar,databaseVar,portVar,auth_pluginVar):
+        """Constructor that connects to the database remotely
+
+        :param hostVar: [host IP address or Host name]
+        :type hostVar: [String]
+        :param userVar: [Name of user connecting to database]
+        :type userVar: [String]
+        :param passwdVar: [Passwrod for the database]
+        :type passwdVar: [String]
+        :param databaseVar: [Name of database being connected to on the mysql server]
+        :type databaseVar: [String]
+        :param portVar: [Port number for connecting to database]
+        :type portVar: [String]
+        :param auth_pluginVar: [Type of plugin to be used for Authenitcatiting the database]
+        :type auth_pluginVar: [String]
+        """
         self.db = mysql.connector.connect(
         host= hostVar,
         user=userVar,
@@ -54,7 +69,11 @@ class database:
         self.db.commit()
     
     def getCurrentActivity(self):
+        """Returns the activity that is currently scheduled for the specific lab
 
+        :return: [The response from the database containing information about scheduled activity]
+        :rtype: [List]
+        """
         now = datetime.now() # The current time
         query = "SELECT * FROM lab_schedule WHERE start <= '{}' and end >= '{}'".format(now,now)
         
@@ -90,4 +109,32 @@ class database:
         query = "INSERT INTO temperature_log(temp_id,date,temp,student_no) VALUES('{}','{}','{}','{}');".format(temp_id,now,tempValaue,student_no)
         self.cursor.execute(query) 
         self.db.commit()
+    
+        # print(query)
+
+        # pass
+
+        
+
+
+# dbObj = database("eee4022sdatabase-do-user-9871310-0.b.db.ondigitalocean.com",
+#     "admin",
+#     "aGAPX1Hn5TdTE-4I",
+#     "lab_system",
+#     "25060",
+#     "mysql_native_password"
+#     )
+
+# results = dbObj.getCurrentActivity()
+# dbObj.markAttendance("DXXJOH001")
+
+# results = dbObj.findStudentNumber("DXXJOH001")
+# print(results)
+
+# Creating curser
+# cursor = db.cursor()
+# cursor.execute("SHOW TABLES")
+
+# for table_name in cursor:
+#    print(table_name)
     

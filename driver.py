@@ -8,6 +8,17 @@ import time
 import asyncio
 
 async def checkTemp(tempObj,LEDObj,loop):
+    """Samples temperature reading and returns it, and also flashes RED or GREEN LED based on weather the temp reading is higher than threshold.
+
+    :param tempObj: [Object from Temp class]
+    :type tempObj: [temp]
+    :param LEDObj: [Object from LED class]
+    :type LEDObj: [LED]
+    :param loop: [Main event loop to be used to run coroutines concurrenlty]
+    :type loop: [asyncio application]
+    :return: [Temperature value of target object]
+    :rtype: [float]
+    """
     tic = time.perf_counter()
     tempValue = await asyncio.gather(tempObj.readTemp())
     toc = time.perf_counter()  
@@ -27,6 +38,19 @@ async def checkTemp(tempObj,LEDObj,loop):
         return tempValue
         
 async def checkRficCard(text,LEDObj,dbObj,loop):
+    """[Checks if student number exists in database and returns True if it exists in database, and False otherwise. Green LED toggled in True case, Red toggled in False case ]
+
+    :param text: [The student number]
+    :type text: [String]
+    :param LEDObj: [Object of LED class]
+    :type LEDObj: [LED]
+    :param dbObj: [Database object from db class with functions for accessing remote database]
+    :type dbObj: [db]
+    :param loop: [Main event loop to be used to run coroutines concurrenlty]
+    :type loop: [asyncio application]
+    :return: [True if student number exists in database, and false otherwise]
+    :rtype: [boolean]
+    """
     tic = time.perf_counter()
     results = await dbObj.findStudentNumber(text)
     toc = time.perf_counter()
@@ -118,3 +142,4 @@ if __name__ == "__main__":
                 toc = time.perf_counter()
                 print(f"Time taken to mark attendance register: {toc - tic:0.4f} seconds")
                 print("")
+
