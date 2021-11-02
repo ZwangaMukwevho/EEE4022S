@@ -12,11 +12,6 @@ Under the Supervision of Jarryd Son.
 
 Direct any queries to Zwanga at: zwangatm3@gmail.com
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-
 
 Indices and tables
 ==================
@@ -24,3 +19,16 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+   
+   driver
+   admin
+   sheets
+   db
+   rfid
+   temp
+
+
