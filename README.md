@@ -1,3 +1,2 @@
 # EEE4022S
-https://readthedocs.org/projects/pip/badge/?version=latest&style=plastic
-https://readthedocs.org/projects/pip/badge/
+https://eee4022s.readthedocs.io/en/latest/index.html
