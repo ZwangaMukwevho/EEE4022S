@@ -33,8 +33,6 @@ class admin:
         """
         keepRunning = True
         while(keepRunning):
-
-            # print("")
             print("Press '1' to update courses in database:")
             print("press '2' to update lab schedule:")
             print("Press '3' to view courses in databases:")
@@ -101,8 +99,6 @@ if __name__ == "__main__":
     "25060",
     "mysql_native_password"
     )
-    # datetime_obj = datetime.strptime("10/15/2021", "%m/%d/%Y")
-    # print(datetime_obj)
     sheetObj = sheets()
     adObj = admin(dbObj,sheetObj)
     adObj.welcomeDisplay()

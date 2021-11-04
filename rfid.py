@@ -10,8 +10,6 @@ class rfid:
         reader = SimpleMFRC522()
         LEDObj = LED()
         def __init__(self):
-               
-                # GPIO.setmode(GPIO.BCM)
                 pass
         
         def writeData(self):
@@ -30,10 +28,7 @@ class rfid:
                 Turns on green LED if access granted
                 Turns on RED LED if access denied"""
                 try:
-                        # print("running")
                         id, text = reader.read()
-                        # print(text)
-                        
                         text = text.strip()
                         return text
                 finally:

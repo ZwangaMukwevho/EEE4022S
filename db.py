@@ -1,4 +1,3 @@
-# import MySQLdb
 import mysql.connector
 import asyncio
 from datetime import datetime
@@ -109,32 +108,4 @@ class database:
         query = "INSERT INTO temperature_log(temp_id,date,temp,student_no) VALUES('{}','{}','{}','{}');".format(temp_id,now,tempValaue,student_no)
         self.cursor.execute(query) 
         self.db.commit()
-    
-        # print(query)
-
-        # pass
-
-        
-
-
-# dbObj = database("eee4022sdatabase-do-user-9871310-0.b.db.ondigitalocean.com",
-#     "admin",
-#     "aGAPX1Hn5TdTE-4I",
-#     "lab_system",
-#     "25060",
-#     "mysql_native_password"
-#     )
-
-# results = dbObj.getCurrentActivity()
-# dbObj.markAttendance("DXXJOH001")
-
-# results = dbObj.findStudentNumber("DXXJOH001")
-# print(results)
-
-# Creating curser
-# cursor = db.cursor()
-# cursor.execute("SHOW TABLES")
-
-# for table_name in cursor:
-#    print(table_name)
     

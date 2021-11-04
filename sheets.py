@@ -17,10 +17,6 @@ class sheets:
         self.courseShedule = self.sh2.sheet1
         self.scheduleResults = self.courseShedule.get_all_records()
         pass
-
-    # def getCourseData(self):
-    #     res = self.courseWorksheet.get_all_records()
-    #     print(res)
     
     def checkCourseExistance(self,course,dbObj):
         """Checks if the course provided by the parameter above exists in the database
@@ -38,9 +34,7 @@ class sheets:
 
         check = False
         for item in cursor:
-            # check = True
             return True
-            # break
         return False
     
     async def AddCourse(self,dbObj):
@@ -276,22 +270,3 @@ class sheets:
         :rtype: [String]
         """
         return code[3:]+"_"+student_id
-
-    
-    
-    # async postTostudent
-
-# Initialisations
-# dbObj = database("eee4022sdatabase-do-user-9871310-0.b.db.ondigitalocean.com",
-#     "admin",
-#     "aGAPX1Hn5TdTE-4I",
-#     "lab_system",
-#     "25060",
-#     "mysql_native_password"
-#     )
-# sheetObj = sheets()
-# loop = asyncio.get_event_loop()
-# loop.run_until_complete(sheetObj.updateLabSchedule(dbObj))
-# loop.run_until_complete(sheetObj.AddCourse(dbObj))
-# loop.run_until_complete(sheetObj.showCourses(dbObj))
-# sheetObj.getCourseData()

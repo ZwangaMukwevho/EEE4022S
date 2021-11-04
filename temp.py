@@ -8,8 +8,6 @@ import asyncio
 GPIO.setmode(GPIO.BCM)
 class temp:
     def __init__(self):
-               
-                # GPIO.setmode(GPIO.BCM)
                 pass
     
     async def readTemp(self):
@@ -29,17 +27,7 @@ class temp:
             targetTemp = float(targetTemp) 
 
             await asyncio.sleep(0.3)
-            # time.sleep(0.3)
-
-            # print("Ambient Temperature:", ambientTemp, "°C")
-            # print("Target Temperature:", targetTemp,"°C")
-
             accumulated_temp = accumulated_temp + float(targetTemp)
 
         accumulated_temp = round(accumulated_temp/10,2)
-        # print("\nAccumulated Temps: "+str(accumulated_temp))
-        
         return accumulated_temp
-
-# tempObj = temp()
-# tempObj.readTemp()
