@@ -112,11 +112,17 @@ class sheets:
 
         for entry in self.scheduleResults:
 
+            
             date = entry['date (yyyy/mm/dd)'] 
             start = entry['start time(hh:mm:ss)']
             end = entry['end time(hh:mm:ss)']
             course_code = entry['course code']
             activity = entry['activity'] 
+
+            # Represents the end of valid entries
+            if date == "":
+                break
+
 
             startDateTime = datetime.strptime(date+" "+start, "%m/%d/%Y %H:%M:%S")
             endDateTime = datetime.strptime(date+" "+end, "%m/%d/%Y %H:%M:%S")
@@ -124,16 +130,16 @@ class sheets:
             schedule_id = self.createScheduleID(course_code,startDateTime,start)
             print(schedule_id)
             
+            # if( not self.checkLabScheduleExistance(schedule_id,dbObj)):
             if( not self.checkLabScheduleExistance(schedule_id,dbObj)):
-                if( not self.checkLabScheduleExistance(schedule_id,dbObj)):
-                    
-                    if(first_entry):
-                        query = "INSERT INTO lab_schedule(schedule_id,start,end,code,activity) VALUES('{}','{}','{}','{}','{}');".format(schedule_id,startDateTime,endDateTime,course_code,activity)
-                        first_entry = False
-                    else:
-                        moreValues = "('{}','{}','{}','{}','{}');".format(schedule_id,startDateTime,endDateTime,course_code,activity)
-                    query = self.gatherInsertQueries(query,moreValues)
-                    schedule_list.append((schedule_id,course_code))
+                
+                if(first_entry):
+                    query = "INSERT INTO lab_schedule(schedule_id,start,end,code,activity) VALUES('{}','{}','{}','{}','{}');".format(schedule_id,startDateTime,endDateTime,course_code,activity)
+                    first_entry = False
+                else:
+                    moreValues = "('{}','{}','{}','{}','{}');".format(schedule_id,startDateTime,endDateTime,course_code,activity)
+                query = self.gatherInsertQueries(query,moreValues)
+                schedule_list.append((schedule_id,course_code))
         
         print(query)
         await dbObj.insertData(query)
@@ -270,3 +276,165 @@ class sheets:
         :rtype: [String]
         """
         return code[3:]+"_"+student_id
+    
+    async def createVenueID(self,scheduleID,lab_name):
+        return scheduleID +"_"+ lab_name
+    
+    async def generateVenueQuery(self,entry,schedule_id,):
+        query = ""
+        # Labs
+        blue_lab = entry['blue lab']
+        red_lab = entry['red lab']
+        white_lab = entry['white lab']
+        green_lab = entry['green lab']
+        CAE_lab = entry['CAE lab']
+        red_lab = entry['red lab']
+
+        First = True
+    
+        if blue_lab == "TRUE":
+            venue_ID = await self.createVenueID(schedule_id,'blue')
+            query = "INSERT into venue(venue_id, schedule_id, lab_name) VALUE('{}', '{}', '{}');".format(venue_ID,schedule_id,'blue lab')
+            First = False
+            # print("blue_lab")
+            # print(venue_ID)
+            # print()
+
+        if red_lab == "TRUE":
+            venue_ID = await self.createVenueID(schedule_id,'red')
+
+            if(First):
+                query = "INSERT into venue(venue_id, schedule_id, lab_name) VALUE('{}', '{}', '{}');".format(venue_ID,schedule_id,'red lab')
+                First = False
+            else:
+                moreValues = "('{}','{}','{}');".format(venue_ID,schedule_id,'red lab')
+                query = self.gatherInsertQueries(query,moreValues)
+                
+            # print("red_lab")
+            # # print(entry)
+            # print(venue_ID)
+            # print()
+
+        if green_lab == "TRUE":
+            venue_ID = await self.createVenueID(schedule_id,'green')
+
+            if(First):
+                query = "INSERT into venue(venue_id, schedule_id, lab_name) VALUE('{}', '{}', '{}');".format(venue_ID,schedule_id,'green lab')
+                First = False
+            else:
+                moreValues = "('{}','{}','{}');".format(venue_ID,schedule_id,'green lab')
+                query = self.gatherInsertQueries(query,moreValues)
+            # print("green_lab")
+            # # print(entry)
+            # print(venue_ID)
+            # print()
+
+        if CAE_lab == "TRUE":
+            venue_ID = await self.createVenueID(schedule_id,'CAE')
+
+            if(First):
+                query = "INSERT into venue(venue_id, schedule_id, lab_name) VALUE('{}', '{}', '{}');".format(venue_ID,schedule_id,'CAE lab')
+                First = False
+            else:
+                moreValues = "('{}','{}','{}');".format(venue_ID,schedule_id,'CAE lab')
+                query = self.gatherInsertQueries(query,moreValues)
+            # print("CAE_lab")
+            # # print(entry)
+            # print(venue_ID)
+            # print()
+
+        if white_lab == "TRUE":
+            venue_ID = await self.createVenueID(schedule_id,'white')
+
+            if(First):
+                query = "INSERT into venue(venue_id, schedule_id, lab_name) VALUE('{}', '{}', '{}');".format(venue_ID,schedule_id,'white lab')
+                First = False
+            else:
+                moreValues = "('{}','{}','{}');".format(venue_ID,schedule_id,'white lab')
+                query = self.gatherInsertQueries(query,moreValues)
+        
+        print(query)
+        # return query
+            # print("white_lab")
+            # print(venue_ID)
+            # print()
+
+sheetsObj = sheets()
+loop = asyncio.get_event_loop()
+# dbObj = database()
+list = sheetsObj.scheduleResults
+entry = list[0]
+for entry in list:
+    loop.run_until_complete(sheetsObj.generateVenueQuery(entry,"2045F-2021-10-18-15"))
+
+# count = 0
+# for entry in list:
+    
+#     date = entry['date (yyyy/mm/dd)'] 
+#     start = entry['start time(hh:mm:ss)']
+#     end = entry['end time(hh:mm:ss)']
+#     course_code = entry['course code']
+#     activity = entry['activity']
+
+#     if date == "":
+#         break
+
+#     startDateTime = datetime.strptime(date+" "+start, "%m/%d/%Y %H:%M:%S")
+#     endDateTime = datetime.strptime(date+" "+end, "%m/%d/%Y %H:%M:%S")
+#     schedule_id = sheetsObj.createScheduleID(course_code,startDateTime,start)
+    
+#     # Labs
+#     blue_lab = entry['blue lab']
+#     red_lab = entry['red lab']
+#     white_lab = entry['white lab']
+#     green_lab = entry['green lab']
+#     CAE_lab = entry['CAE lab']
+#     red_lab = entry['red lab']
+
+#     # Check labs 
+#     if blue_lab == "TRUE":
+#         venue_ID = loop.run_until_complete(sheetsObj.createVenueID(schedule_id,'blue'))
+#         print("blue_lab")
+#         # print(entry)
+#         print(venue_ID)
+#         print()
+    
+#     if red_lab == "TRUE":
+#         venue_ID = loop.run_until_complete(sheetsObj.createVenueID(schedule_id,'red'))
+#         print("red_lab")
+#         # print(entry)
+#         print(venue_ID)
+#         print()
+
+#     if green_lab == "TRUE":
+#         venue_ID = loop.run_until_complete(sheetsObj.createVenueID(schedule_id,'green'))
+#         print("green_lab")
+#         # print(entry)
+#         print(venue_ID)
+#         print()
+    
+#     if CAE_lab == "TRUE":
+#         venue_ID = loop.run_until_complete(sheetsObj.createVenueID(schedule_id,'CAE'))
+#         print("CAE_lab")
+#         # print(entry)
+#         print(venue_ID)
+#         print()
+    
+#     if white_lab == "TRUE":
+#         venue_ID = loop.run_until_complete(sheetsObj.createVenueID(schedule_id,'white'))
+#         print("white_lab")
+#         print(venue_ID)
+#         print()
+#     count = count + 1
+
+    
+    
+    # venue = loop.run_until_complete(sheetsObj.createVenueID(schedule_id))
+    # print(schedule_id)
+
+
+    
+    # print(entry)
+# print(count)
+# loop = asyncio.get_event_loop()
+# loop.run_until_complete(sheetsObj.updateLabSchedule(dbObj))
