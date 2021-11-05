@@ -97,6 +97,7 @@ class sheets:
         return query
 
 
+    # async def updateLabSchedule(self):
     async def updateLabSchedule(self,dbObj):
         """Updates the lab scheduled in the database based on entries on the google sheets document
 
@@ -109,6 +110,10 @@ class sheets:
         invalid_data = False
         query = ""
         first_entry = True
+
+        # For generating venues
+        second_entry = True
+        query_2 = ""
 
         for entry in self.scheduleResults:
 
@@ -123,26 +128,41 @@ class sheets:
             if date == "":
                 break
 
-
             startDateTime = datetime.strptime(date+" "+start, "%m/%d/%Y %H:%M:%S")
             endDateTime = datetime.strptime(date+" "+end, "%m/%d/%Y %H:%M:%S")
 
             schedule_id = self.createScheduleID(course_code,startDateTime,start)
-            print(schedule_id)
+            # print(schedule_id)
             
             # if( not self.checkLabScheduleExistance(schedule_id,dbObj)):
             if( not self.checkLabScheduleExistance(schedule_id,dbObj)):
-                
+
+                # For populating the venues table
+                if(second_entry):
+                    query_2 = await self.generateVenueQuery(entry,schedule_id,second_entry,query_2)
+                    second_entry = False
+                else:
+                    query_2 = await self.generateVenueQuery(entry,schedule_id,second_entry,query_2)
+                    # second_entry = False
+
+                # For populating schedules table
                 if(first_entry):
                     query = "INSERT INTO lab_schedule(schedule_id,start,end,code,activity) VALUES('{}','{}','{}','{}','{}');".format(schedule_id,startDateTime,endDateTime,course_code,activity)
                     first_entry = False
                 else:
                     moreValues = "('{}','{}','{}','{}','{}');".format(schedule_id,startDateTime,endDateTime,course_code,activity)
+
+
                 query = self.gatherInsertQueries(query,moreValues)
                 schedule_list.append((schedule_id,course_code))
+                # await dbObj.insertData(query_2)
         
-        print(query)
+        # print("Query 1")
+        # print(query)
+        print("Query 2")
+        print(query_2)
         await dbObj.insertData(query)
+        await dbObj.insertData(query_2)       
         # cursor.execute(query)
         await self.generateRegister(schedule_list,dbObj)
 
@@ -280,8 +300,24 @@ class sheets:
     async def createVenueID(self,scheduleID,lab_name):
         return scheduleID +"_"+ lab_name
     
-    async def generateVenueQuery(self,entry,schedule_id,):
-        query = ""
+    async def generateVenueQuery(self,entry,schedule_id,First,query):
+        """Generates the queries for the query for the venue tables when a new lab schedule is created
+
+        :param entry: The entry row from the google
+        :type entry: dictionary
+        :param schedule_id: The schedule id of the entry
+        :type schedule_id: String
+        :param First: Boolean that checks if the entry is to be appended on query statement or it is the first entry
+        :type First: Boolean
+        :param query: The query that the new entry query is to be appended to
+        :type query: Boolean
+        :return: Updated query, that contains information from previous query and information from the new query
+        :rtype: String
+        """
+
+        # print("entry")
+        # print(entry)
+        # query = ""
         # Labs
         blue_lab = entry['blue lab']
         red_lab = entry['red lab']
@@ -290,17 +326,23 @@ class sheets:
         CAE_lab = entry['CAE lab']
         red_lab = entry['red lab']
 
-        First = True
+        # First = True
     
         if blue_lab == "TRUE":
             venue_ID = await self.createVenueID(schedule_id,'blue')
-            query = "INSERT into venue(venue_id, schedule_id, lab_name) VALUE('{}', '{}', '{}');".format(venue_ID,schedule_id,'blue lab')
-            First = False
+
+            if(First):
+                query = "INSERT into venue(venue_id, schedule_id, lab_name) VALUE('{}', '{}', '{}');".format(venue_ID,schedule_id,'blue lab')
+                First = False
+            else:
+                moreValues = "('{}','{}','{}');".format(venue_ID,schedule_id,'blue lab')
+                query = self.gatherInsertQueries(query,moreValues)
             # print("blue_lab")
             # print(venue_ID)
             # print()
 
         if red_lab == "TRUE":
+            print("red lab checked")
             venue_ID = await self.createVenueID(schedule_id,'red')
 
             if(First):
@@ -316,6 +358,7 @@ class sheets:
             # print()
 
         if green_lab == "TRUE":
+            print("green checked")
             venue_ID = await self.createVenueID(schedule_id,'green')
 
             if(First):
@@ -344,6 +387,7 @@ class sheets:
             # print()
 
         if white_lab == "TRUE":
+            print("white checked")
             venue_ID = await self.createVenueID(schedule_id,'white')
 
             if(First):
@@ -353,7 +397,10 @@ class sheets:
                 moreValues = "('{}','{}','{}');".format(venue_ID,schedule_id,'white lab')
                 query = self.gatherInsertQueries(query,moreValues)
         
-        print(query)
+        # print("In function query")
+        # print(query)
+        # print("in function query end")
+        return query
         # return query
             # print("white_lab")
             # print(venue_ID)
@@ -362,10 +409,19 @@ class sheets:
 sheetsObj = sheets()
 loop = asyncio.get_event_loop()
 # dbObj = database()
-list = sheetsObj.scheduleResults
-entry = list[0]
-for entry in list:
-    loop.run_until_complete(sheetsObj.generateVenueQuery(entry,"2045F-2021-10-18-15"))
+dbObj = database("eee4022sdatabase-do-user-9871310-0.b.db.ondigitalocean.com",
+    "admin",
+    "aGAPX1Hn5TdTE-4I",
+    "lab_system",
+    "25060",
+    "mysql_native_password"
+    )
+# sheetsObj.updateLabSchedule()
+loop.run_until_complete(sheetsObj.updateLabSchedule(dbObj))
+# list = sheetsObj.scheduleResults
+# entry = list[0]
+# for entry in list:
+#     loop.run_until_complete(sheetsObj.generateVenueQuery(entry,"2045F-2021-10-18-15"))
 
 # count = 0
 # for entry in list:

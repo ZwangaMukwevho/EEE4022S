@@ -1,3 +1,4 @@
+# import MySQLdb
 import mysql.connector
 import asyncio
 from datetime import datetime
@@ -67,27 +68,26 @@ class database:
         self.cursor.execute(query)
         self.db.commit()
     
-    def getCurrentActivity(self):
+    def getCurrentActivity(self,lab_name):
         """Returns the activity that is currently scheduled for the specific lab
 
         :return: [The response from the database containing information about scheduled activity]
         :rtype: [List]
         """
         now = datetime.now() # The current time
-        query = "SELECT * FROM lab_schedule WHERE start <= '{}' and end >= '{}'".format(now,now)
-        
+        # query = "SELECT * FROM lab_schedule WHERE start <= '{}' and end >= '{}'".format(now,now)
+        query = "SELECT DISTINCT ls.schedule_id, ls.start, ls.end, ls.code, ls.activity FROM lab_schedule AS ls, venue WHERE venue.lab_name = '{}' AND ls.end >= '{}' AND ls.start <= '{}';".format(lab_name,now,now)
         self.cursor.execute(query)
-
         results = self.cursor.fetchall()
         return results
     
-    async def markAttendance(self,student_no):
+    async def markAttendance(self,student_no,lab_name):
         """Changes status bit from 0 to 1 in the register schema for student with student number student_no
 
         :param student_no: [Student number of student]
         :type student_no: [String]
         """
-        results = self.getCurrentActivity()
+        results = self.getCurrentActivity(lab_name)
         for activity in results:
             schedule_id = activity[0]
             query = "UPDATE register SET status = '1' WHERE student_no = '{}' AND schedule_id = '{}';".format(student_no,schedule_id)
@@ -108,4 +108,5 @@ class database:
         query = "INSERT INTO temperature_log(temp_id,date,temp,student_no) VALUES('{}','{}','{}','{}');".format(temp_id,now,tempValaue,student_no)
         self.cursor.execute(query) 
         self.db.commit()
+
     

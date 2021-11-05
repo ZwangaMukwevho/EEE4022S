@@ -67,6 +67,7 @@ async def checkRficCard(text,LEDObj,dbObj,loop):
 
 if __name__ == "__main__":
 
+    lab_name = "blue lab"
     tempObj = temp()  # Temp class object
     rfidObj = rfid() # rfid object object
     LEDObj = LED() # #LED class object
@@ -78,7 +79,7 @@ if __name__ == "__main__":
     "mysql_native_password") # database class object 
 
     loop = asyncio.get_event_loop()
-    while(True):
+    for i in range(1):
         student_no = loop.run_until_complete(rfidObj.readData())
         rfidCheck = loop.run_until_complete(checkRficCard(student_no,LEDObj,dbObj,loop))
         print(student_no)
@@ -88,7 +89,9 @@ if __name__ == "__main__":
 
             if(tempCheck[0] <34.50 ):
                 # Run marking of attendance register and posting to database concurrently
-                loop.run_until_complete(asyncio.gather(dbObj.markAttendance(student_no),dbObj.postTempReading(student_no,tempCheck[0])))
+                loop.run_until_complete(asyncio.gather(dbObj.markAttendance(student_no,lab_name),dbObj.postTempReading(student_no,tempCheck[0])))
                 time.sleep(0.5)
+                
+
                 
 
