@@ -47,6 +47,7 @@ Alternatively run `ps aux` to get the process ID and run **2.** to kill the scri
 python3 admin.py
 ```
 2. Scheduling activity in database and creating register for activity.
+
 2.1.  Access spreadsheet and add the scheduled activity
 https://docs.google.com/spreadsheets/d/1J3cPjzjKt7C20qA6SKbMP4uiy95oTLgCJEqW0fD4BLI/edit?usp=sharing
 
