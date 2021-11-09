@@ -49,5 +49,6 @@ python3 admin.py
 2. Scheduling activity in database and creating register for activity.
 2.1.  Access spreadsheet and add the scheduled activity
 https://docs.google.com/spreadsheets/d/1J3cPjzjKt7C20qA6SKbMP4uiy95oTLgCJEqW0fD4BLI/edit?usp=sharing
+
 2.2. After adding activity to database.
 	Run: `python3 admin.py`and follow the promts for adding schedule to the database
